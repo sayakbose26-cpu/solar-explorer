@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLAR SYSTEM EXPLORER</title>
+    <style>
+        h1 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 40px;
+            margin: 0;
+            color: #fff;
+            text-align: left;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            font-weight: 300;
+            text-transform: uppercase;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
+        }
+
+        :root {
+            --bg: #020408;
+            --transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(1px 1px at 20px 30px, #fff, rgba(0, 0, 0, 0)),
+                radial-gradient(1.5px 1.5px at 100px 150px, #fff, rgba(0, 0, 0, 0)),
+                radial-gradient(2px 2px at 250px 350px, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0));
+            background-size: 300px 300px;
+            opacity: 0.4;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        .menu {
+            cursor: pointer;
+            width: 10%;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: var(--transition);
+            z-index: 2;
+            position: relative;
+        }
+
+        .preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: inset -10px -10px 20px rgba(0, 0, 0, 0.8), 5px 5px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .murcury .preview {
+            background: radial-gradient(circle at 30% 30%, #b1b1b1, #333);
+        }
+
+        .venus .preview {
+            background: radial-gradient(circle at 30% 30%, #f3d19e, #8b5d14);
+        }
+
+        .earth .preview {
+            background: radial-gradient(circle at 30% 30%, #4facfe, #003e7e);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mars .preview {
+            background: radial-gradient(circle at 30% 30%, #ff5f6d, #6b1414);
+        }
+
+        .jupiter .preview {
+            background: radial-gradient(circle at 30% 30%, #ebca9b, #533b2c);
+        }
+
+        .saturn .preview {
+            background: radial-gradient(circle at 30% 30%, #e0c595, #4b3a1a);
+        }
+
+        .uranus .preview {
+            background: radial-gradient(circle at 30% 30%, #a1eafb, #2a5a64);
+        }
+
+        .neptune .preview {
+            background: radial-gradient(circle at 30% 30%, #3f5efb, #121c4b);
+        }
+
+        .pluto .preview {
+            background: radial-gradient(circle at 30% 30%, #9e8e81, #241e19);
+        }
+
+        .sun {
+            position: fixed;
+            top: -150px;
+            left: -150px;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+
+            background: radial-gradient(circle at 70% 70%,
+                    #fff 0%,
+                    #fffa86 20%,
+                    #f9d71c 50%,
+                    #ff8c00 100%);
+
+            box-shadow: 0 0 100px #f9d71c,
+                0 0 200px rgba(255, 140, 0, 0.4);
+
+            z-index: 1;
+            animation: sunGlow 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes sunGlow {
+            from {
+                box-shadow: 0 0 80px #f9d71c, 0 0 150px rgba(255, 140, 0, 0.3);
+                transform: scale(1);
+            }
+
+            to {
+                box-shadow: 0 0 120px #f9d71c, 0 0 250px rgba(255, 140, 0, 0.6);
+                transform: scale(1.05);
+            }
+        }
+        @media (max-width: 768px) {
+            .sun {
+                width: 200px;
+                height: 200px;
+                top: -80px;
+                left: -80px;
+            }
+        }
+
+        .info {
+            text-align: center;
+            margin-top: 10px;
+            transition: var(--transition);
+        }
+
+        .info h2 {
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin: 5px 0;
+        }
+
+        .description {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ccc;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        input:checked+.menu {
+            width: 20%;
+        }
+
+        input:checked+.menu .preview {
+            transform: translateY(-50vh) scale(6);
+            box-shadow: inset -15px -15px 30px rgba(0, 0, 0, 0.9), 0 0 50px rgba(255, 255, 255, 0.1);
+        }
+
+        input:checked+.menu .description {
+            opacity: 1;
+            top: 55%;
+        }
+
+        input:checked+.menu h2 {
+            position: fixed;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 40px;
+            opacity: 1;
+        }
+
+        .saturn .preview::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 160%;
+            height: 20%;
+            border: 4px solid rgba(190, 170, 130, 0.4);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) rotateX(70deg);
+        }
+
+        @media (max-width: 768px) {
+            .menu {
+                width: 11%;
+            }
+
+            .preview {
+                width: 30px;
+                height: 30px;
+            }
+
+            .info h2 {
+                font-size: 8px;
+            }
+
+            .description {
+                width: 80%;
+                font-size: 12px;
+            }
+
+            input:checked+.menu .preview {
+                scale: 4.5;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>SOLAR EXPLORER</h1>
+    <div class="sun"></div>
+
+    <input class="planet1" id="murcury" type="radio" name="planet">
+    <label class="menu murcury" for="murcury">
+        <div class="preview"></div>
+        <div class="info">
+            <h2>MERCURY</h2>
+            <div class="description">The smallest planet in our solar system and closest to the Sun—is only slightly
+                larger than Earth's Moon. It has a thin atmosphere and extreme temperatures.</div>
+        </div>
+    </label>
+
+    <input class="planet2" id="venus" type="radio" name="planet">
+    <label class="menu venus" for="venus">
+        <div class="preview"></div>
+        <div class="info">
+            <h2>VENUS</h2>
+            <div class="description">Spinning in the opposite direction to most planets, Venus is the hottest planet,
+                and its thick atmosphere traps heat in a runaway greenhouse effect.</div>
+        </div>
+    </label>
+
+    <input class="planet3" id="earth" type="radio" name="planet" checked>
+    <label class="menu earth" for="earth">
+        <div class="preview"></div>
+        <div class="info">
+            <h2>EARTH</h2>
+            <div class="description">Our home planet. It is the only place we know of so far that’s inhabited by living
+                things. It's also the only planet with liquid water on the surface.</div>
+        </div>
+    </label>
+
+    <input class="planet4" id="mars" type="radio" name="planet">
+    <label class="menu mars" for="mars">
+        <div class="preview"></div>
+        <div class="info">
+            <h2>MARS</h2>
+            <div class="description">The Red Planet. Mars is a dusty, cold, desert world with a very thin atmosphere.
+                There is strong evidence that Mars was once much wetter and warmer.</div>
+        </div>
+    </label>
+
+    <input class="planet5" id="jupiter" type="radio" name="planet">
+    <label class="menu jupiter" for="jupiter">
+        <div class="preview"></div>
+        <div class="info">
+            <h2>JUPITER</h2>
+            <div class="description">The largest planet in our solar system. It is a gas giant with a Great Red Spot—a
+                storm larger than Earth that has lasted for hundreds of years.</div>
+        </div>
+    </label>
+
+    <input class="planet6" id="saturn" type="radio" name="planet">
+    <label class="menu saturn" for="saturn">
+        <div class="preview"></div>
+        <div class="info">
+            <h2>SATURN</h2>
+            <div class="description">Adorned with a dazzling, complex system of icy rings, Saturn is unique in our solar
+                system. It is a gas giant made mostly of hydrogen and helium.</div>
+        </div>
+    </label>
+
+    <input class="planet7" id="uranus" type="radio" name="planet">
+    <label class="menu uranus" for="uranus">
+        <div class="preview"></div>
+        <div class="info">
+            <h2>URANUS</h2>
+            <div class="description">An ice giant with a unique tilt. It rotates on its side at nearly a 90-degree angle
+                from the plane of its orbit, making it look like a rolling ball.</div>
+        </div>
+    </label>
+
+    <input class="planet8" id="neptune" type="radio" name="planet">
+    <label class="menu neptune" for="neptune">
+        <div class="preview"></div>
+        <div class="info">
+            <h2>NEPTUNE</h2>
+            <div class="description">Dark, cold, and whipped by supersonic winds, ice giant Neptune is the eighth and
+                most distant planet in our solar system.</div>
+        </div>
+    </label>
+
+    <input class="planet9" id="pluto" type="radio" name="planet">
+    <label class="menu pluto" for="pluto">
+        <div class="preview"></div>
+        <div class="info">
+            <h2>PLUTO</h2>
+            <div class="description">Once the ninth planet, Pluto is now classified as a dwarf planet in the Kuiper
+                Belt, a region of icy objects beyond the orbit of Neptune.</div>
+        </div>
+    </label>
+
+</body>
+
+</html>
